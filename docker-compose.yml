@@ -1,12 +1,31 @@
+# Specify the version of Docker Compose format
 version: '3.8'
 
+# Define the services (containers) to be managed
 services:
+  # Define the service for FastAPI application
   fastapi:
+    # Configuration for building the image
     build:
+      # Specify the build context (current directory)
       context: .
+      # Specify the Dockerfile to use
       dockerfile: Dockerfile
+    # Specify a custom name for the built image
+    image: shubhamaiml/fastapi:latest
+
+    # Expose and map ports
     ports:
+      # Map container's port 8000 to host's port 8000
       - "8000:8000"
+
+    # Environment variables passed to the container
     environment:
+      # Use the GEMINI_API_KEY variable from the host's environment
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-    container_name: fastapi-container
+
+    # Assign a custom name to the container
+    #container_name: shubhamaiml/fastapi:latest
+
+    # Add a restart policy for resilience (e.g., restart the container if it crashes)
+    restart: always
