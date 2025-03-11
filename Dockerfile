@@ -2,6 +2,9 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
+# Add this line to accept the TAG build argument
+ARG TAG 
+
 COPY requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt
