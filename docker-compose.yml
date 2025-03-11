@@ -11,8 +11,12 @@ services:
       context: .
       # Specify the Dockerfile to use
       dockerfile: Dockerfile
+      # Pass the TAG argument to the Dockerfile
+      args:
+        - TAG=latest
+
     # Specify a custom name for the built image
-    image: shubhamaiml/fastapi:latest
+    image: shubhamaiml/fastapi:${TAG}
 
     # Expose and map ports
     ports:
@@ -23,9 +27,6 @@ services:
     environment:
       # Use the GEMINI_API_KEY variable from the host's environment
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-
-    # Assign a custom name to the container
-    #container_name: shubhamaiml/fastapi:latest
 
     # Add a restart policy for resilience (e.g., restart the container if it crashes)
     restart: always
