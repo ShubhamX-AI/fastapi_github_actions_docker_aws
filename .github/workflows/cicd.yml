@@ -25,7 +25,7 @@ jobs:
           
           DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/fastapi
           
-          TAG=$IMAGE_TAG docker-compose build
+          docker-compose build
           
           docker tag $DOCKER_REPO:$IMAGE_TAG $DOCKER_REPO:latest
           
