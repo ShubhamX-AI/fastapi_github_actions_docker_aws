@@ -3,48 +3,37 @@ name: FastAPI CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Trigger the workflow when code is pushed to the 'main' branch
+      - main
 
 jobs:
-  build:  # Define the 'build' job
-    runs-on: ubuntu-latest  # Run the job on an Ubuntu virtual machine
+  build-and-push:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3  # Checkout the repository code
+        uses: actions/checkout@v3
 
-      - name: Set up Docker Compose
-        uses: docker/setup-docker-compose@v2 # Set up Docker Compose
-
-      - name: Build Docker Image
-        run: |                                                      
-            IMAGE_TAG=$(git rev-parse --short HEAD) # Get the short Git SHA of the latest commit 
-
-            docker-compose build --build-arg TAG=$IMAGE_TAG 
-          
-            docker tag shubhamaiml/fastapi:$IMAGE_TAG ${{ secrets.DOCKER_USERNAME }}/fastapi:$IMAGE_TAG 
-          
-            echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV 
-
-        # Get the short Git SHA of the latest commit 
-        # Build the Docker image using docker-compose, passing the Git SHA as a build argument named TAG
-        # Tag the built image with the Git SHA
-        # Set the IMAGE_TAG as an environment variable for subsequent jobs and also allows the image tag to be passed from the build job to the push job.
-  
-  push:  # Define the 'push' job
-    runs-on: ubuntu-latest  # Run the job on an Ubuntu virtual machine
-    needs: build  # Ensure the 'build' job completes successfully before running this job
-    steps:
       - name: Login to Docker Hub
-        uses: docker/login-action@v2  # Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}  # Use the Docker Hub username stored as a secret
-          password: ${{ secrets.DOCKER_PASSWORD }}  # Use the Docker Hub password stored as a secret
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push Docker Image
+      - name: Build and Push Docker Image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/fastapi:${{ env.IMAGE_TAG }}  
-          docker push ${{ secrets.DOCKER_USERNAME }}/fastapi:latest 
-        
-        # Push the Docker image tagged with the Git SHA to Docker Hub
-        # Push the Docker image with the 'latest' tag to Docker Hub
-        # This lines pushes the image twice, once with the git sha tag, and once with the latest tag.
+          
+          IMAGE_TAG=$(git rev-parse --short HEAD) 
+          
+          DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/fastapi
+          
+          TAG=$IMAGE_TAG docker-compose build
+          
+          docker tag $DOCKER_REPO:$IMAGE_TAG $DOCKER_REPO:latest
+          
+          docker push $DOCKER_REPO:$IMAGE_TAG
+          docker push $DOCKER_REPO:latest
+
+        # Set the image tag to the short Git SHA
+        # Define the Docker repository name
+        # Build the image with docker-compose, setting TAG as an environment variable
+        # Tag the image with 'latest'
+        # Push both tagged images to Docker Hub
