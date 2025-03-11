@@ -12,6 +12,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3  # Checkout the repository code
 
+      - name: Set up Docker Compose
+        uses: docker/setup-docker-compose@v2 # Set up Docker Compose
+
       - name: Build Docker Image
         run: |                                                      
             IMAGE_TAG=$(git rev-parse --short HEAD) # Get the short Git SHA of the latest commit 
