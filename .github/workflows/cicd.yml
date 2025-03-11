@@ -18,6 +18,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Check Docker Compose Version
+        run: docker-compose --version
+
       - name: Build and Push Docker Image
         run: |
           
@@ -25,7 +28,7 @@ jobs:
           
           DOCKER_REPO=${{ secrets.DOCKER_USERNAME }}/fastapi
           
-          docker-compose build
+          DOCKER_REPO=$DOCKER_REPO TAG=$IMAGE_TAG docker compose build
           
           docker tag $DOCKER_REPO:$IMAGE_TAG $DOCKER_REPO:latest
           
