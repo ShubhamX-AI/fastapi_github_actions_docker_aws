@@ -40,3 +40,14 @@ jobs:
         # Build the image with docker-compose, setting TAG as an environment variable
         # Tag the image with 'latest'
         # Push both tagged images to Docker Hub
+  
+  deploy:
+    needs: build-and-push
+    runs-on: aws-ec2
+    steps:
+      - name: pull image from docker hub
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi:latest
+      - name: delete existing container
+        run: docker rm -f fastapi || true
+      - name: run new container
+        run: docker run -d -p 8000:8000 --name fastapi --env-file .env ${{ secrets.DOCKER_USERNAME }}/fastapi:latest    
