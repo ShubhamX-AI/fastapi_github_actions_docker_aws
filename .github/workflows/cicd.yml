@@ -46,8 +46,8 @@ jobs:
     runs-on: awsrunner
     steps:
       - name: pull image from docker hub
-        run: docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi:latest
+        run: sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi:latest
       - name: delete existing container
-        run: docker rm -f fastapi || true
+        run: sudo docker rm -f fastapi || true
       - name: run new container
-        run: docker run -d -p 8000:8000 --name fastapi --env-file .env ${{ secrets.DOCKER_USERNAME }}/fastapi:latest    
+        run: sudo docker run -d -p 8000:8000 --name fastapi --env-file .env ${{ secrets.DOCKER_USERNAME }}/fastapi:latest    
