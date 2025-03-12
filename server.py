@@ -9,7 +9,7 @@ app = FastAPI()
 # Define a route
 @app.get("/")
 def read_root():
-    return {"Server": "Running"}
+    return {"The owner is Shubham Halder"}
 
 
 @app.post("/api_call_test")
